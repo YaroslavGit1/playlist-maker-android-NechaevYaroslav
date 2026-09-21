@@ -18,5 +18,6 @@
     <string name="clear_search">Очистить поиск</string>
     <string name="arrow_forward">Перейти</string>
     <string name="no_tracks_found">Ничего не нашлось</string>
+    <string name="search_error">Проблемы со связью</string>
     <string name="check_connection">Проверьте подключение к интернету</string>
 </resources>

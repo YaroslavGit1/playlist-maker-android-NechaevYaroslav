@@ -199,7 +199,7 @@ private fun SearchResults(
 
         is SearchState.Fail -> {
             InformerState(
-                titleText = screenState.error,
+                titleText = stringResource(R.string.search_error),
                 subtitleText = stringResource(R.string.check_connection),
             )
         }
@@ -256,12 +256,14 @@ private fun TrackListItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+            painter = painterResource(R.drawable.ic_music),
             contentDescription = null,
-            tint = colors.secondary,
+            tint = colors.onField,
             modifier = Modifier
                 .size(45.dp)
-                .clip(RoundedCornerShape(2.dp)),
+                .clip(RoundedCornerShape(2.dp))
+                .background(colors.field)
+                .padding(8.dp),
         )
         Spacer(Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
