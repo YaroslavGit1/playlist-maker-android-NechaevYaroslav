@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,10 +19,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,9 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.playlist_maker_android_nechaevyaroslav.R
 import com.example.playlist_maker_android_nechaevyaroslav.ui.components.ScreenHeader
-import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.Black
-import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.Blue
-import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.Gray
+import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalDarkTheme
+import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylistColors
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.PlaylistmakerandroidNechaevYaroslavTheme
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.StatusBarIcons
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.White
@@ -42,6 +38,8 @@ import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.White
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
+    darkThemeEnabled: Boolean,
+    onDarkThemeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -51,28 +49,29 @@ fun SettingsScreen(
     val emailBody = stringResource(R.string.email_body)
     val offerUrl = stringResource(R.string.offer_url)
 
-    var darkThemeEnabled by remember { mutableStateOf(false) }
+    val colors = LocalPlaylistColors.current
 
-    StatusBarIcons(lightIcons = false)
+    StatusBarIcons(lightIcons = LocalDarkTheme.current)
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(White),
+            .background(colors.background),
     ) {
         ScreenHeader(
             title = stringResource(R.string.menu_settings),
             onBackClick = onBackClick,
         )
+        Spacer(Modifier.height(24.dp))
         SettingsRow(
             title = stringResource(R.string.settings_dark_theme),
             trailing = {
                 Switch(
                     checked = darkThemeEnabled,
-                    onCheckedChange = { darkThemeEnabled = it },
+                    onCheckedChange = onDarkThemeChange,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = White,
-                        checkedTrackColor = Blue,
+                        checkedTrackColor = colors.accent,
                     ),
                 )
             },
@@ -119,6 +118,8 @@ private fun SettingsRow(
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
+    val colors = LocalPlaylistColors.current
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -129,7 +130,7 @@ private fun SettingsRow(
     ) {
         Text(
             text = title,
-            color = Black,
+            color = colors.onBackground,
             fontSize = 16.sp,
             modifier = Modifier.weight(1f),
         )
@@ -139,7 +140,7 @@ private fun SettingsRow(
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null,
-                tint = Gray,
+                tint = colors.secondary,
                 modifier = Modifier.size(24.dp),
             )
         }
@@ -158,6 +159,6 @@ private fun Context.openIntent(intent: Intent) {
 @Composable
 private fun SettingsScreenPreview() {
     PlaylistmakerandroidNechaevYaroslavTheme {
-        SettingsScreen(onBackClick = {})
+        SettingsScreen(onBackClick = {}, darkThemeEnabled = false, onDarkThemeChange = {})
     }
 }

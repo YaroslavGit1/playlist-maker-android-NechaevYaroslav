@@ -18,14 +18,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.playlist_maker_android_nechaevyaroslav.R
-import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.Black
+import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylistColors
 
 @Composable
 fun ScreenHeader(
-    title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String? = null,
 ) {
+    val colors = LocalPlaylistColors.current
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -36,17 +38,19 @@ fun ScreenHeader(
         Icon(
             painter = painterResource(R.drawable.ic_arrow_back),
             contentDescription = null,
-            tint = Black,
+            tint = colors.onBackground,
             modifier = Modifier
                 .size(24.dp)
                 .clickable(onClick = onBackClick),
         )
-        Spacer(Modifier.width(16.dp))
-        Text(
-            text = title,
-            color = Black,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Medium,
-        )
+        if (title != null) {
+            Spacer(Modifier.width(24.dp))
+            Text(
+                text = title,
+                color = colors.onBackground,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
 }
