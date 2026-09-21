@@ -4,4 +4,13 @@
     <string name="menu_playlists">Плейлисты</string>
     <string name="menu_favorites">Избранное</string>
     <string name="menu_settings">Настройки</string>
+    <string name="settings_dark_theme">Тёмная тема</string>
+    <string name="settings_share">Поделиться приложением</string>
+    <string name="settings_support">Написать разработчикам</string>
+    <string name="settings_agreement">Пользовательское соглашение</string>
+    <string name="share_message">Попробуйте Playlist Maker — приложение для создания плейлистов!</string>
+    <string name="developer_email">jark2016@mail.ru</string>
+    <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="offer_url">https://yandex.ru/legal/practicum_offer/</string>
 </resources>
