@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.example.playlist_maker_android_nechaevyaroslav.data.settings.ThemeSettings
@@ -16,10 +14,12 @@ import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.Playlistmaker
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.SearchViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val searchViewModel: SearchViewModel by viewModels { SearchViewModel.getViewModelFactory() }
+    private val searchViewModel: SearchViewModel by viewModel()
+    private val gson = Gson()
     private val themeSettings: ThemeSettings by lazy { (application as MyApplication).provideThemeSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                 PlaylistHost(
                     navController = rememberNavController(),
                     searchViewModel = searchViewModel,
-                    gson = remember { Gson() },
+                    gson = gson,
                     isDarkTheme = isDarkTheme,
                     onDarkThemeChange = { enabled ->
                         lifecycleScope.launch { themeSettings.setDarkTheme(enabled) }
