@@ -20,4 +20,17 @@
     <string name="no_tracks_found">Ничего не нашлось</string>
     <string name="search_error">Проблемы со связью</string>
     <string name="check_connection">Проверьте подключение к интернету</string>
+    <string name="new_playlist_title">Новый плейлист</string>
+    <string name="playlist_name_hint">Название*</string>
+    <string name="playlist_description_hint">Описание</string>
+    <string name="playlist_save">Сохранить</string>
+    <string name="add_playlist">Добавить плейлист</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="add_to_favorites">Добавить в избранное</string>
+    <string name="remove_from_favorites">Удалить из избранного</string>
+    <string name="added_to_playlist">Добавлено в плейлист «%1$s»</string>
+    <string name="playlist_cover">Обложка плейлиста %1$s</string>
+    <string name="tracks_count_one">%d трек</string>
+    <string name="tracks_count_few">%d трека</string>
+    <string name="tracks_count_many">%d треков</string>
 </resources>

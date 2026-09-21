@@ -58,7 +58,7 @@ class SearchViewModel(
             _searchScreenState.value = SearchState.Searching
             try {
                 searchHistoryRepository.addToHistory(request)
-                val foundTracks = tracksRepository.searchTracksContains(request)
+                val foundTracks = tracksRepository.searchTracks(request)
                 _searchScreenState.value = SearchState.Success(foundTracks)
             } catch (e: IOException) {
                 _searchScreenState.value = SearchState.Fail(e.message.toString())

@@ -121,11 +121,13 @@ fun SearchScreen(
                 modifier = Modifier.padding(top = 8.dp),
             )
         }
-        SearchResults(
-            screenState = screenState,
-            onTrackClick = navigateToDetailScreen,
-            modifier = Modifier.padding(top = 16.dp),
-        )
+        if (searchQuery.isNotEmpty()) {
+            SearchResults(
+                screenState = screenState,
+                onTrackClick = navigateToDetailScreen,
+                modifier = Modifier.padding(top = 16.dp),
+            )
+        }
     }
 }
 

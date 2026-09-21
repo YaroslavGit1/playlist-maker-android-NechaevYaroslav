@@ -7,4 +7,7 @@ val viewModelModule = module {
     viewModel {
         SearchViewModel(get(), get())
     }
+    viewModel {
+        PlaylistsViewModel(get(), get())
+    }
 }

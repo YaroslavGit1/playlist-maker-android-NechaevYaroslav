@@ -11,10 +11,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.playlist_maker_android_nechaevyaroslav.domain.model.Track
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.DetailsScreen
+import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.FavoritesScreen
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.MainScreen
+import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.NewPlaylistScreen
+import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.PlaylistsScreen
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.SearchScreen
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.SettingsScreen
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylistColors
+import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.PlaylistsViewModel
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.SearchViewModel
 import com.google.gson.Gson
 
@@ -24,6 +28,7 @@ private const val TRACK_JSON_ARG = "trackJson"
 fun PlaylistHost(
     navController: NavHostController,
     searchViewModel: SearchViewModel,
+    playlistsViewModel: PlaylistsViewModel,
     gson: Gson,
     isDarkTheme: Boolean,
     onDarkThemeChange: (Boolean) -> Unit,
@@ -40,6 +45,8 @@ fun PlaylistHost(
         composable(PlaylistScreen.Main.route) {
             MainScreen(
                 onSearchClick = { navController.navigateTo(PlaylistScreen.Search) },
+                onPlaylistsClick = { navController.navigateTo(PlaylistScreen.Playlists) },
+                onFavoritesClick = { navController.navigateTo(PlaylistScreen.Favorites) },
                 onSettingsClick = { navController.navigateTo(PlaylistScreen.Settings) },
             )
         }
@@ -51,6 +58,22 @@ fun PlaylistHost(
                 },
                 navigateBack = navController::navigateBack,
             )
+        }
+        composable(PlaylistScreen.Playlists.route) {
+            PlaylistsScreen(
+                playlistsViewModel = playlistsViewModel,
+                onCreatePlaylistClick = { navController.navigateTo(PlaylistScreen.NewPlaylist) },
+                onBackClick = navController::navigateBack,
+            )
+        }
+        composable(PlaylistScreen.NewPlaylist.route) {
+            NewPlaylistScreen(
+                playlistsViewModel = playlistsViewModel,
+                onBackClick = navController::navigateBack,
+            )
+        }
+        composable(PlaylistScreen.Favorites.route) {
+            FavoritesScreen(onBackClick = navController::navigateBack)
         }
         composable(PlaylistScreen.Settings.route) {
             SettingsScreen(
@@ -64,6 +87,7 @@ fun PlaylistHost(
             if (trackJson != null) {
                 DetailsScreen(
                     track = gson.fromJson(trackJson, Track::class.java),
+                    playlistsViewModel = playlistsViewModel,
                     onBackClick = navController::navigateBack,
                 )
             }
