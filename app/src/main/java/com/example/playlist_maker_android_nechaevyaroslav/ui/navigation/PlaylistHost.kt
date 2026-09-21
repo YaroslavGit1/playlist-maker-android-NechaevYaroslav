@@ -1,7 +1,10 @@
 package com.example.playlist_maker_android_nechaevyaroslav.ui.navigation
 
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,6 +14,7 @@ import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.DetailsScre
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.MainScreen
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.SearchScreen
 import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.SettingsScreen
+import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylistColors
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.SearchViewModel
 import com.google.gson.Gson
 
@@ -24,9 +28,14 @@ fun PlaylistHost(
     isDarkTheme: Boolean,
     onDarkThemeChange: (Boolean) -> Unit,
 ) {
+    val colors = LocalPlaylistColors.current
+
     NavHost(
         navController = navController,
         startDestination = PlaylistScreen.Main.route,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.background),
     ) {
         composable(PlaylistScreen.Main.route) {
             MainScreen(
