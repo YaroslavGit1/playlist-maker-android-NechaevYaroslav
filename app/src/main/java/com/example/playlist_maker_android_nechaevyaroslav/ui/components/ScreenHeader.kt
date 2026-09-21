@@ -41,7 +41,7 @@ fun ScreenHeader(
                 .size(24.dp)
                 .clickable(onClick = onBackClick),
         )
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(24.dp))
         Text(
             text = title,
             color = Black,

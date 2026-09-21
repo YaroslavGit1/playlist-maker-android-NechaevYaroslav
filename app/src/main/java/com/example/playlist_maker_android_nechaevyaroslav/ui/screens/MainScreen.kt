@@ -2,11 +2,13 @@ package com.example.playlist_maker_android_nechaevyaroslav.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -58,22 +60,29 @@ fun MainScreen(
             .fillMaxSize()
             .background(Blue),
     ) {
-        Text(
-            text = stringResource(R.string.app_name),
-            color = White,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Medium,
+        Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(start = 16.dp, top = 12.dp, bottom = 12.dp),
-        )
+                .height(56.dp)
+                .padding(start = 16.dp),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            Text(
+                text = stringResource(R.string.app_name),
+                color = White,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+        Spacer(Modifier.height(14.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .background(White)
-                .padding(top = 8.dp),
+                .padding(top = 8.dp, start = 16.dp, end = 16.dp),
         ) {
             menuItems.forEach { item ->
                 MainMenuItemRow(
@@ -94,8 +103,9 @@ private fun MainMenuItemRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .height(66.dp)
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -104,7 +114,7 @@ private fun MainMenuItemRow(
             tint = Black,
             modifier = Modifier.size(24.dp),
         )
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(8.dp))
         Text(
             text = stringResource(item.titleRes),
             color = Black,
