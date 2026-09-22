@@ -1,12 +1,14 @@
 package com.example.playlist_maker_android_nechaevyaroslav.data.di
 
-import com.example.playlist_maker_android_nechaevyaroslav.data.DatabaseMock
+import android.content.Context
 import com.example.playlist_maker_android_nechaevyaroslav.data.PlaylistsRepositoryImpl
 import com.example.playlist_maker_android_nechaevyaroslav.data.SearchHistoryRepositoryImpl
 import com.example.playlist_maker_android_nechaevyaroslav.data.TracksRepositoryImpl
 import com.example.playlist_maker_android_nechaevyaroslav.data.network.ITunesApi
 import com.example.playlist_maker_android_nechaevyaroslav.data.network.NetworkClient
 import com.example.playlist_maker_android_nechaevyaroslav.data.network.RetrofitNetworkClient
+import com.example.playlist_maker_android_nechaevyaroslav.data.preferences.SearchHistoryPreferences
+import com.example.playlist_maker_android_nechaevyaroslav.data.preferences.searchHistoryDataStore
 import com.example.playlist_maker_android_nechaevyaroslav.domain.api.PlaylistsRepository
 import com.example.playlist_maker_android_nechaevyaroslav.domain.api.SearchHistoryRepository
 import com.example.playlist_maker_android_nechaevyaroslav.domain.api.TracksRepository
@@ -18,7 +20,7 @@ private const val ITUNES_BASE_URL = "https://itunes.apple.com/"
 
 val repositoryModule = module {
     single {
-        DatabaseMock()
+        SearchHistoryPreferences(get<Context>().searchHistoryDataStore)
     }
     single {
         Retrofit.Builder()
@@ -36,7 +38,7 @@ val repositoryModule = module {
         TracksRepositoryImpl(get(), get())
     }
     factory<PlaylistsRepository> {
-        PlaylistsRepositoryImpl(get(), get())
+        PlaylistsRepositoryImpl(get())
     }
     factory<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(get())
