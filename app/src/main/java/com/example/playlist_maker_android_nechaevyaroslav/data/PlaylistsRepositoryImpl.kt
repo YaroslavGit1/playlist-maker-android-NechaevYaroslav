@@ -21,8 +21,14 @@ class PlaylistsRepositoryImpl(
     override fun getAllPlaylists(): Flow<List<Playlist>> =
         playlistsDao.getPlaylistsWithTracks().map { playlists -> playlists.map { it.toPlaylist() } }
 
-    override suspend fun addNewPlaylist(name: String, description: String) {
-        playlistsDao.insertPlaylist(PlaylistEntity(name = name, description = description))
+    override suspend fun addNewPlaylist(name: String, description: String, coverImageUri: String?) {
+        playlistsDao.insertPlaylist(
+            PlaylistEntity(
+                name = name,
+                description = description,
+                coverImageUri = coverImageUri,
+            ),
+        )
     }
 
     override suspend fun deletePlaylistById(id: Long) {
