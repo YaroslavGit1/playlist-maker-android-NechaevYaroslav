@@ -41,4 +41,8 @@
     <string name="minutes_count_few">%d минуты</string>
     <string name="minutes_count_many">%d минут</string>
     <string name="playlist_stats">%1$s • %2$s</string>
+    <string name="remove_track_title">Удалить трек?</string>
+    <string name="remove_track_message">Трек «%1$s» будет удалён из плейлиста.</string>
+    <string name="remove_track_confirm">Удалить</string>
+    <string name="cancel">Отмена</string>
 </resources>
