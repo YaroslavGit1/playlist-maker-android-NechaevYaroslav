@@ -3,8 +3,8 @@ package com.example.playlist_maker_android_nechaevyaroslav.ui.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker_android_nechaevyaroslav.domain.api.SearchHistoryRepository
+import com.example.playlist_maker_android_nechaevyaroslav.domain.api.SearchResult
 import com.example.playlist_maker_android_nechaevyaroslav.domain.api.TracksRepository
-import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -26,6 +26,7 @@ class SearchViewModel(
     val searchScreenState: StateFlow<SearchState> = _searchScreenState.asStateFlow()
 
     private var searchJob: Job? = null
+    private var lastQuery: String = ""
 
     init {
         viewModelScope.launch {
@@ -34,6 +35,7 @@ class SearchViewModel(
                 .distinctUntilChanged()
                 .collect { query ->
                     if (query.isNotEmpty()) {
+                        searchHistoryRepository.addToHistory(query)
                         performSearch(query)
                     }
                 }
@@ -46,22 +48,28 @@ class SearchViewModel(
 
     fun clearSearch() {
         searchJob?.cancel()
+        lastQuery = ""
         _searchQuery.value = ""
         _searchScreenState.value = SearchState.Initial
+    }
+
+    fun retryLastSearch() {
+        if (lastQuery.isNotEmpty()) {
+            performSearch(lastQuery)
+        }
     }
 
     suspend fun getHistoryList(): List<String> = searchHistoryRepository.getHistory()
 
     private fun performSearch(request: String) {
         searchJob?.cancel()
+        lastQuery = request
         searchJob = viewModelScope.launch(Dispatchers.IO) {
             _searchScreenState.value = SearchState.Searching
-            try {
-                searchHistoryRepository.addToHistory(request)
-                val foundTracks = tracksRepository.searchTracks(request)
-                _searchScreenState.value = SearchState.Success(foundTracks)
-            } catch (e: IOException) {
-                _searchScreenState.value = SearchState.Fail(e.message.toString())
+            when (val result = tracksRepository.searchTracks(request)) {
+                is SearchResult.Success -> _searchScreenState.value = SearchState.Success(result.tracks)
+                is SearchResult.ServerError -> _searchScreenState.value = SearchState.ServerError
+                is SearchResult.NetworkError -> _searchScreenState.value = SearchState.NetworkError
             }
         }
     }

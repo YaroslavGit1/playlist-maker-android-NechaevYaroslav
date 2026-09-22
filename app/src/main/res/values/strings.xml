@@ -20,6 +20,8 @@
     <string name="no_tracks_found">Ничего не нашлось</string>
     <string name="search_error">Проблемы со связью</string>
     <string name="check_connection">Проверьте подключение к интернету</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="retry_search">Обновить</string>
     <string name="new_playlist_title">Новый плейлист</string>
     <string name="playlist_name_hint">Название*</string>
     <string name="playlist_description_hint">Описание</string>
@@ -33,4 +35,8 @@
     <string name="tracks_count_one">%d трек</string>
     <string name="tracks_count_few">%d трека</string>
     <string name="tracks_count_many">%d треков</string>
+    <string name="minutes_count_one">%d минута</string>
+    <string name="minutes_count_few">%d минуты</string>
+    <string name="minutes_count_many">%d минут</string>
+    <string name="playlist_stats">%1$s • %2$s</string>
 </resources>
