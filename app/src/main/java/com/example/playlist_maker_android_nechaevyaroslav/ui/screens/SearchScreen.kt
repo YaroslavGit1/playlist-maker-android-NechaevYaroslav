@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,14 +25,19 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -60,10 +66,25 @@ fun SearchScreen(
 ) {
     val screenState by searchViewModel.searchScreenState.collectAsState()
     var searchQuery by rememberSaveable { mutableStateOf("") }
+    var history by remember { mutableStateOf<List<String>>(emptyList()) }
+    var isSearchFieldFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val colors = LocalPlaylistColors.current
 
     StatusBarIcons(lightIcons = LocalDarkTheme.current)
+
+    LaunchedEffect(screenState) {
+        if (screenState is SearchState.Success) {
+            focusManager.clearFocus()
+        }
+    }
+
+    LaunchedEffect(isSearchFieldFocused, searchQuery) {
+        if (isSearchFieldFocused && searchQuery.isEmpty()) {
+            history = searchViewModel.getHistoryList()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -76,24 +97,37 @@ fun SearchScreen(
         )
         SearchField(
             query = searchQuery,
-            onQueryChange = { searchQuery = it },
-            onSearch = {
-                if (searchQuery.isNotEmpty()) {
-                    searchViewModel.searchTracks(searchQuery)
-                    focusManager.clearFocus()
-                }
+            onQueryChange = {
+                searchQuery = it
+                searchViewModel.updateQuery(it)
             },
+            onSearch = focusManager::clearFocus,
             onClear = {
                 searchQuery = ""
                 searchViewModel.clearSearch()
+                focusRequester.requestFocus()
             },
+            focusRequester = focusRequester,
+            onFocusChanged = { isSearchFieldFocused = it },
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         )
-        SearchResults(
-            screenState = screenState,
-            onTrackClick = navigateToDetailScreen,
-            modifier = Modifier.padding(top = 16.dp),
-        )
+        if (isSearchFieldFocused && searchQuery.isEmpty() && history.isNotEmpty()) {
+            SearchHistory(
+                history = history,
+                onHistoryClick = { word ->
+                    searchQuery = word
+                    searchViewModel.updateQuery(word)
+                },
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+        if (searchQuery.isNotEmpty()) {
+            SearchResults(
+                screenState = screenState,
+                onTrackClick = navigateToDetailScreen,
+                modifier = Modifier.padding(top = 16.dp),
+            )
+        }
     }
 }
 
@@ -103,6 +137,8 @@ private fun SearchField(
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
     onClear: () -> Unit,
+    focusRequester: FocusRequester,
+    onFocusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPlaylistColors.current
@@ -113,6 +149,8 @@ private fun SearchField(
         modifier = modifier
             .fillMaxWidth()
             .height(36.dp)
+            .focusRequester(focusRequester)
+            .onFocusChanged { onFocusChanged(it.isFocused) }
             .clip(RoundedCornerShape(8.dp))
             .background(colors.field),
         textStyle = TextStyle(color = colors.onField, fontSize = 16.sp),
@@ -131,9 +169,7 @@ private fun SearchField(
                     painter = painterResource(R.drawable.ic_search),
                     contentDescription = stringResource(R.string.search_icon),
                     tint = colors.onField,
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clickable(onClick = onSearch),
+                    modifier = Modifier.size(16.dp),
                 )
                 Spacer(Modifier.width(8.dp))
                 Box(modifier = Modifier.weight(1f)) {
@@ -160,6 +196,47 @@ private fun SearchField(
             }
         },
     )
+}
+
+@Composable
+private fun SearchHistory(
+    history: List<String>,
+    onHistoryClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = LocalPlaylistColors.current
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 200.dp),
+    ) {
+        items(history) { word ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clickable { onHistoryClick(word) }
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_history),
+                    contentDescription = null,
+                    tint = colors.secondary,
+                    modifier = Modifier.size(20.dp),
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = word,
+                    color = colors.onBackground,
+                    fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
 }
 
 @Composable

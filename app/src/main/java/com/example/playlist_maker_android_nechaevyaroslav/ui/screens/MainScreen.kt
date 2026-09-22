@@ -40,6 +40,8 @@ private data class MainMenuItem(
 @Composable
 fun MainScreen(
     onSearchClick: () -> Unit,
+    onPlaylistsClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -49,8 +51,8 @@ fun MainScreen(
 
     val menuItems = listOf(
         MainMenuItem(R.drawable.ic_search, R.string.menu_search, onSearchClick),
-        MainMenuItem(R.drawable.ic_playlists, R.string.menu_playlists, {}),
-        MainMenuItem(R.drawable.ic_favorites, R.string.menu_favorites, {}),
+        MainMenuItem(R.drawable.ic_playlists, R.string.menu_playlists, onPlaylistsClick),
+        MainMenuItem(R.drawable.ic_favorites, R.string.menu_favorites, onFavoritesClick),
         MainMenuItem(R.drawable.ic_settings, R.string.menu_settings, onSettingsClick),
     )
 
@@ -136,6 +138,11 @@ private fun MainMenuItemRow(
 @Composable
 private fun MainScreenPreview() {
     PlaylistmakerandroidNechaevYaroslavTheme {
-        MainScreen(onSearchClick = {}, onSettingsClick = {})
+        MainScreen(
+            onSearchClick = {},
+            onPlaylistsClick = {},
+            onFavoritesClick = {},
+            onSettingsClick = {},
+        )
     }
 }

@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.playlist_maker_android_nechaevyaroslav.data.settings.ThemeSettings
 import com.example.playlist_maker_android_nechaevyaroslav.ui.navigation.PlaylistHost
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.PlaylistmakerandroidNechaevYaroslavTheme
+import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.PlaylistsViewModel
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.SearchViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -19,6 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
 
     private val searchViewModel: SearchViewModel by viewModel()
+    private val playlistsViewModel: PlaylistsViewModel by viewModel()
     private val gson = Gson()
     private val themeSettings: ThemeSettings by lazy { (application as MyApplication).provideThemeSettings() }
 
@@ -32,6 +34,7 @@ class MainActivity : ComponentActivity() {
                 PlaylistHost(
                     navController = rememberNavController(),
                     searchViewModel = searchViewModel,
+                    playlistsViewModel = playlistsViewModel,
                     gson = gson,
                     isDarkTheme = isDarkTheme,
                     onDarkThemeChange = { enabled ->
