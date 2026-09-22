@@ -1,5 +1,6 @@
 package com.example.playlist_maker_android_nechaevyaroslav.data.database.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.playlist_maker_android_nechaevyaroslav.domain.model.Track
@@ -14,6 +15,12 @@ data class TrackEntity(
     val trackDurationMillis: Long,
     val image: String,
     val favorite: Boolean = false,
+    @ColumnInfo(defaultValue = "")
+    val album: String = "",
+    @ColumnInfo(defaultValue = "")
+    val year: String = "",
+    @ColumnInfo(defaultValue = "")
+    val genre: String = "",
 )
 
 fun TrackEntity.toTrack(): Track = Track(
@@ -24,6 +31,9 @@ fun TrackEntity.toTrack(): Track = Track(
     trackDurationMillis = trackDurationMillis,
     image = image,
     favorite = favorite,
+    album = album,
+    year = year,
+    genre = genre,
 )
 
 fun Track.toEntity(): TrackEntity = TrackEntity(
@@ -34,4 +44,7 @@ fun Track.toEntity(): TrackEntity = TrackEntity(
     trackDurationMillis = trackDurationMillis,
     image = image,
     favorite = favorite,
+    album = album,
+    year = year,
+    genre = genre,
 )
