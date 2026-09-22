@@ -12,11 +12,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,6 +69,7 @@ fun PlaylistScreen(
             PlaylistContent(
                 playlist = data,
                 onTrackClick = onTrackClick,
+                onTrackRemove = playlistViewModel::removeTrackFromPlaylist,
             )
         }
     }
@@ -73,9 +79,11 @@ fun PlaylistScreen(
 private fun PlaylistContent(
     playlist: Playlist,
     onTrackClick: (Track) -> Unit,
+    onTrackRemove: (Track) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPlaylistColors.current
+    var trackToRemove by remember { mutableStateOf<Track?>(null) }
 
     LazyColumn(
         modifier = modifier
@@ -135,8 +143,34 @@ private fun PlaylistContent(
             TrackListItem(
                 track = track,
                 onClick = { onTrackClick(track) },
+                onLongClick = { trackToRemove = track },
             )
         }
+    }
+
+    trackToRemove?.let { track ->
+        AlertDialog(
+            onDismissRequest = { trackToRemove = null },
+            title = { Text(text = stringResource(R.string.remove_track_title)) },
+            text = {
+                Text(text = stringResource(R.string.remove_track_message, track.trackName))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onTrackRemove(track)
+                        trackToRemove = null
+                    },
+                ) {
+                    Text(text = stringResource(R.string.remove_track_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { trackToRemove = null }) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            },
+        )
     }
 }
 
