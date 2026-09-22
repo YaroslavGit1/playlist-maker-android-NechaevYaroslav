@@ -101,7 +101,13 @@ fun PlaylistHost(
             )
         }
         composable(Destination.Favorites.route) {
-            FavoritesScreen(onBackClick = navController::navigateBack)
+            FavoritesScreen(
+                playlistsViewModel = playlistsViewModel,
+                onTrackClick = { track ->
+                    navController.navigateToDetails(gson.toJson(track))
+                },
+                onBackClick = navController::navigateBack,
+            )
         }
         composable(Destination.Settings.route) {
             SettingsScreen(
