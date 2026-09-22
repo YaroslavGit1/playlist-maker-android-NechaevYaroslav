@@ -32,6 +32,8 @@
     <string name="remove_from_favorites">Удалить из избранного</string>
     <string name="added_to_playlist">Добавлено в плейлист «%1$s»</string>
     <string name="playlist_cover">Обложка плейлиста %1$s</string>
+    <string name="select_image">Выбрать изображение</string>
+    <string name="permission_required">Для выбора обложки необходимо разрешение на доступ к файлам</string>
     <string name="tracks_count_one">%d трек</string>
     <string name="tracks_count_few">%d трека</string>
     <string name="tracks_count_many">%d треков</string>

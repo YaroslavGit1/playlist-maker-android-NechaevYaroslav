@@ -23,6 +23,7 @@ import com.example.playlist_maker_android_nechaevyaroslav.ui.screens.SettingsScr
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylistColors
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.PlaylistViewModel
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.PlaylistsViewModel
+import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.NewPlaylistViewModel
 import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.SearchViewModel
 import com.google.gson.Gson
 import org.koin.androidx.compose.koinViewModel
@@ -95,8 +96,9 @@ fun PlaylistHost(
             )
         }
         composable(Destination.NewPlaylist.route) {
+            val newPlaylistViewModel: NewPlaylistViewModel = koinViewModel()
             NewPlaylistScreen(
-                playlistsViewModel = playlistsViewModel,
+                viewModel = newPlaylistViewModel,
                 onBackClick = navController::navigateBack,
             )
         }
