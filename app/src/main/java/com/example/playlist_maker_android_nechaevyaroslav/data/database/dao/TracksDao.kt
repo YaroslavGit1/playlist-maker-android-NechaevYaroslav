@@ -23,21 +23,8 @@ interface TracksDao {
     @Query("SELECT * FROM tracks WHERE favorite = 1")
     fun getFavoriteTracks(): Flow<List<TrackEntity>>
 
-    @Query("SELECT * FROM tracks")
-    fun getAllTracks(): Flow<List<TrackEntity>>
-
-    @Query(
-        "SELECT tracks.* FROM tracks " +
-            "INNER JOIN playlist_tracks ON tracks.id = playlist_tracks.trackId " +
-            "WHERE playlist_tracks.playlistId = :playlistId",
-    )
-    fun getTracksFromPlaylist(playlistId: Long): Flow<List<TrackEntity>>
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlaylistTrack(playlistTrack: PlaylistTrackEntity)
-
-    @Query("SELECT * FROM playlist_tracks")
-    fun getPlaylistTracks(): Flow<List<PlaylistTrackEntity>>
 
     @Query("DELETE FROM playlist_tracks WHERE playlistId = :playlistId AND trackId = :trackId")
     suspend fun deletePlaylistTrack(playlistId: Long, trackId: Long)
