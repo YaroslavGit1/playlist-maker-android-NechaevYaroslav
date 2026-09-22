@@ -2,6 +2,7 @@ package com.example.playlist_maker_android_nechaevyaroslav.ui.screens
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -69,16 +70,24 @@ fun NewPlaylistScreen(
     val coverImageUri by viewModel.coverImageUri.collectAsState()
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.OpenDocument(),
     ) { uri: Uri? ->
-        uri?.let { viewModel.setCoverImageUri(it.toString()) }
+        uri?.let {
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION,
+                )
+            }
+            viewModel.setCoverImageUri(it.toString())
+        }
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (isGranted) {
-            imagePickerLauncher.launch(IMAGE_MIME_TYPE)
+            imagePickerLauncher.launch(arrayOf(IMAGE_MIME_TYPE))
         } else {
             Toast.makeText(
                 context,
@@ -90,9 +99,9 @@ fun NewPlaylistScreen(
 
     val onCoverClick: () -> Unit = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            imagePickerLauncher.launch(IMAGE_MIME_TYPE)
+            imagePickerLauncher.launch(arrayOf(IMAGE_MIME_TYPE))
         } else if (hasReadStoragePermission(context)) {
-            imagePickerLauncher.launch(IMAGE_MIME_TYPE)
+            imagePickerLauncher.launch(arrayOf(IMAGE_MIME_TYPE))
         } else {
             permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }

@@ -58,6 +58,9 @@ private fun TrackDto.toTrack(): Track {
         trackTime = formatDuration(durationMillis),
         trackDurationMillis = durationMillis,
         image = artworkUrl100.orEmpty(),
+        album = collectionName.orEmpty(),
+        year = releaseDate?.take(YEAR_LENGTH).orEmpty(),
+        genre = primaryGenreName.orEmpty(),
     )
 }
 
@@ -65,3 +68,5 @@ private fun formatDuration(durationMillis: Long): String {
     val totalSeconds = durationMillis.coerceAtLeast(0L) / 1000
     return String.format(Locale.ROOT, "%d:%02d", totalSeconds / 60, totalSeconds % 60)
 }
+
+private const val YEAR_LENGTH = 4

@@ -8,4 +8,7 @@ data class Track(
     val trackDurationMillis: Long = 0L,
     val image: String = "",
     val favorite: Boolean = false,
+    val album: String = "",
+    val year: String = "",
+    val genre: String = "",
 )
