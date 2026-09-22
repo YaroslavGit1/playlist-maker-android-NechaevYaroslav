@@ -1,5 +1,6 @@
 package com.example.playlist_maker_android_nechaevyaroslav.ui.screens
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,11 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -40,6 +42,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -51,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import com.example.playlist_maker_android_nechaevyaroslav.R
 import com.example.playlist_maker_android_nechaevyaroslav.domain.model.Track
 import com.example.playlist_maker_android_nechaevyaroslav.ui.components.ScreenHeader
+import com.example.playlist_maker_android_nechaevyaroslav.ui.components.TrackListItem
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalDarkTheme
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylistColors
 import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.StatusBarIcons
@@ -70,12 +74,16 @@ fun SearchScreen(
     var isSearchFieldFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val colors = LocalPlaylistColors.current
 
     StatusBarIcons(lightIcons = LocalDarkTheme.current)
 
     LaunchedEffect(screenState) {
-        if (screenState is SearchState.Success) {
+        val isResultShown = screenState is SearchState.Success ||
+            screenState is SearchState.ServerError ||
+            screenState is SearchState.NetworkError
+        if (isResultShown) {
             focusManager.clearFocus()
         }
     }
@@ -106,6 +114,7 @@ fun SearchScreen(
                 searchQuery = ""
                 searchViewModel.clearSearch()
                 focusRequester.requestFocus()
+                keyboardController?.hide()
             },
             focusRequester = focusRequester,
             onFocusChanged = { isSearchFieldFocused = it },
@@ -125,6 +134,7 @@ fun SearchScreen(
             SearchResults(
                 screenState = screenState,
                 onTrackClick = navigateToDetailScreen,
+                onRetry = searchViewModel::retryLastSearch,
                 modifier = Modifier.padding(top = 16.dp),
             )
         }
@@ -243,6 +253,7 @@ private fun SearchHistory(
 private fun SearchResults(
     screenState: SearchState,
     onTrackClick: (Track) -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (screenState) {
@@ -261,7 +272,10 @@ private fun SearchResults(
         is SearchState.Success -> {
             val tracks = screenState.foundList
             if (tracks.isEmpty()) {
-                InformerState(titleText = stringResource(R.string.no_tracks_found))
+                InformerState(
+                    imageRes = R.drawable.ic_nothing_found,
+                    titleText = stringResource(R.string.no_tracks_found),
+                )
             } else {
                 LazyColumn(modifier = modifier) {
                     items(tracks) { track ->
@@ -274,10 +288,22 @@ private fun SearchResults(
             }
         }
 
-        is SearchState.Fail -> {
+        is SearchState.ServerError -> {
             InformerState(
+                imageRes = R.drawable.ic_server_error,
+                titleText = stringResource(R.string.server_error),
+                actionText = stringResource(R.string.retry_search),
+                onAction = onRetry,
+            )
+        }
+
+        is SearchState.NetworkError -> {
+            InformerState(
+                imageRes = R.drawable.ic_server_error,
                 titleText = stringResource(R.string.search_error),
                 subtitleText = stringResource(R.string.check_connection),
+                actionText = stringResource(R.string.retry_search),
+                onAction = onRetry,
             )
         }
     }
@@ -285,9 +311,12 @@ private fun SearchResults(
 
 @Composable
 private fun InformerState(
+    @DrawableRes imageRes: Int,
     titleText: String,
-    subtitleText: String? = null,
     modifier: Modifier = Modifier,
+    subtitleText: String? = null,
+    actionText: String? = null,
+    onAction: (() -> Unit)? = null,
 ) {
     val colors = LocalPlaylistColors.current
 
@@ -298,6 +327,13 @@ private fun InformerState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        Icon(
+            painter = painterResource(imageRes),
+            contentDescription = null,
+            tint = colors.onBackground,
+            modifier = Modifier.size(120.dp),
+        )
+        Spacer(Modifier.height(16.dp))
         Text(
             text = titleText,
             color = colors.onBackground,
@@ -313,78 +349,20 @@ private fun InformerState(
                 textAlign = TextAlign.Center,
             )
         }
-    }
-}
-
-@Composable
-private fun TrackListItem(
-    track: Track,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val colors = LocalPlaylistColors.current
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(61.dp)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_music),
-            contentDescription = null,
-            tint = colors.onField,
-            modifier = Modifier
-                .size(45.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(colors.field)
-                .padding(8.dp),
-        )
-        Spacer(Modifier.width(8.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = track.trackName,
-                color = colors.onBackground,
-                fontSize = 16.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        if (actionText != null && onAction != null) {
+            Spacer(Modifier.height(24.dp))
+            Button(
+                onClick = onAction,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.accent,
+                    contentColor = colors.onAccent,
+                ),
+            ) {
                 Text(
-                    text = track.artistName,
-                    color = colors.secondary,
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-                Box(
-                    modifier = Modifier.size(13.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(3.dp)
-                            .clip(CircleShape)
-                            .background(colors.secondary),
-                    )
-                }
-                Text(
-                    text = track.trackTime,
-                    color = colors.secondary,
-                    fontSize = 11.sp,
-                    maxLines = 1,
+                    text = actionText,
+                    fontSize = 16.sp,
                 )
             }
         }
-        Spacer(Modifier.width(8.dp))
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_forward),
-            contentDescription = stringResource(R.string.arrow_forward),
-            tint = colors.secondary,
-            modifier = Modifier.size(24.dp),
-        )
     }
 }

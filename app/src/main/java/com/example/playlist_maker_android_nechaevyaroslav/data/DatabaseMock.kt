@@ -93,20 +93,32 @@ class DatabaseMock {
     init {
         tracks.addAll(
             listOf(
-                Track(trackIdCounter.incrementAndGet(), "Yesterday (Remastered 2009)", "The Beatles", "2:55"),
-                Track(trackIdCounter.incrementAndGet(), "Here Comes The Sun (Remastered 2009)", "The Beatles", "4:01"),
-                Track(trackIdCounter.incrementAndGet(), "No Reply", "The Beatles", "5:12"),
-                Track(trackIdCounter.incrementAndGet(), "Let It Be", "The Beatles", "6:01"),
-                Track(trackIdCounter.incrementAndGet(), "Girl", "The Beatles", "4:11"),
-                Track(trackIdCounter.incrementAndGet(), "Michelle", "The Beatles", "3:01"),
-                Track(trackIdCounter.incrementAndGet(), "Eleanor Rigby", "The Beatles", "6:12"),
-                Track(trackIdCounter.incrementAndGet(), "Come Together", "The Beatles", "4:09"),
+                Track(trackIdCounter.incrementAndGet(), "Yesterday (Remastered 2009)", "The Beatles", "2:55", 175_000L),
+                Track(trackIdCounter.incrementAndGet(), "Here Comes The Sun (Remastered 2009)", "The Beatles", "4:01", 241_000L),
+                Track(trackIdCounter.incrementAndGet(), "No Reply", "The Beatles", "5:12", 312_000L),
+                Track(trackIdCounter.incrementAndGet(), "Let It Be", "The Beatles", "6:01", 361_000L),
+                Track(trackIdCounter.incrementAndGet(), "Girl", "The Beatles", "4:11", 251_000L),
+                Track(trackIdCounter.incrementAndGet(), "Michelle", "The Beatles", "3:01", 181_000L),
+                Track(trackIdCounter.incrementAndGet(), "Eleanor Rigby", "The Beatles", "6:12", 372_000L),
+                Track(trackIdCounter.incrementAndGet(), "Come Together", "The Beatles", "4:09", 249_000L),
             ),
         )
         playlists.addAll(
             listOf(
                 Playlist(playlistIdCounter.incrementAndGet(), "Best songs 2021", "My favorite tracks", null, emptyList()),
                 Playlist(playlistIdCounter.incrementAndGet(), "Summer Party", "Beach vibes", null, emptyList()),
+            ),
+        )
+        playlistTrackRefs.addAll(
+            listOf(
+                1L to 1L,
+                1L to 2L,
+                1L to 3L,
+                1L to 4L,
+                1L to 5L,
+                2L to 6L,
+                2L to 7L,
+                2L to 8L,
             ),
         )
         historyList.addAll(listOf("Rammstein", "Queen", "Bruno Mars"))

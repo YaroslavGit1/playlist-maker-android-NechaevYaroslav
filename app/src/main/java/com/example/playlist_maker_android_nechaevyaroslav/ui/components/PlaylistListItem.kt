@@ -70,13 +70,3 @@ fun PlaylistListItem(
         }
     }
 }
-
-@Composable
-private fun tracksCountText(count: Int): String {
-    val stringResId = when {
-        count % 10 == 1 && count % 100 != 11 -> R.string.tracks_count_one
-        count % 10 in 2..4 && count % 100 !in 12..14 -> R.string.tracks_count_few
-        else -> R.string.tracks_count_many
-    }
-    return stringResource(stringResId, count)
-}

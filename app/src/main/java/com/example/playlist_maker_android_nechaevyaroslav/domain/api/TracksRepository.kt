@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TracksRepository {
 
-    suspend fun searchTracks(expression: String): List<Track>
+    suspend fun searchTracks(expression: String): SearchResult
 
     fun getTrackByNameAndArtist(track: Track): Flow<Track?>
 

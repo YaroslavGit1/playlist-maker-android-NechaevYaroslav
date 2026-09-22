@@ -30,6 +30,7 @@ import com.example.playlist_maker_android_nechaevyaroslav.ui.view_model.Playlist
 fun PlaylistsScreen(
     playlistsViewModel: PlaylistsViewModel,
     onCreatePlaylistClick: () -> Unit,
+    onPlaylistClick: (Long) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -50,7 +51,10 @@ fun PlaylistsScreen(
             )
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(playlists) { playlist ->
-                    PlaylistListItem(playlist = playlist)
+                    PlaylistListItem(
+                        playlist = playlist,
+                        onClick = { onPlaylistClick(playlist.id) },
+                    )
                 }
             }
         }
