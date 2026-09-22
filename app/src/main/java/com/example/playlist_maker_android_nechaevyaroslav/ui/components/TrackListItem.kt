@@ -1,7 +1,7 @@
 package com.example.playlist_maker_android_nechaevyaroslav.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +35,7 @@ import com.example.playlist_maker_android_nechaevyaroslav.ui.theme.LocalPlaylist
 fun TrackListItem(
     track: Track,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalPlaylistColors.current
@@ -43,7 +44,10 @@ fun TrackListItem(
         modifier = modifier
             .fillMaxWidth()
             .height(61.dp)
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+            )
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
