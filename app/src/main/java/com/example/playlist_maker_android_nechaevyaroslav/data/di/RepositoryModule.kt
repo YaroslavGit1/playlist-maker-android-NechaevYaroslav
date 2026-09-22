@@ -36,7 +36,7 @@ val repositoryModule = module {
         TracksRepositoryImpl(get(), get())
     }
     factory<PlaylistsRepository> {
-        PlaylistsRepositoryImpl(get())
+        PlaylistsRepositoryImpl(get(), get())
     }
     factory<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(get())

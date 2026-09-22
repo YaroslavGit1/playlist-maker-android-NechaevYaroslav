@@ -1,5 +1,9 @@
 package com.example.playlist_maker_android_nechaevyaroslav.data
 
+import com.example.playlist_maker_android_nechaevyaroslav.data.database.AppDatabase
+import com.example.playlist_maker_android_nechaevyaroslav.data.database.entity.PlaylistTrackEntity
+import com.example.playlist_maker_android_nechaevyaroslav.data.database.entity.toEntity
+import com.example.playlist_maker_android_nechaevyaroslav.data.database.entity.toTrack
 import com.example.playlist_maker_android_nechaevyaroslav.data.dto.TrackDto
 import com.example.playlist_maker_android_nechaevyaroslav.data.network.NetworkClient
 import com.example.playlist_maker_android_nechaevyaroslav.data.network.NetworkResult
@@ -8,11 +12,14 @@ import com.example.playlist_maker_android_nechaevyaroslav.domain.api.TracksRepos
 import com.example.playlist_maker_android_nechaevyaroslav.domain.model.Track
 import java.util.Locale
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TracksRepositoryImpl(
-    private val database: DatabaseMock,
     private val networkClient: NetworkClient,
+    database: AppDatabase,
 ) : TracksRepository {
+
+    private val tracksDao = database.tracksDao()
 
     override suspend fun searchTracks(expression: String): SearchResult =
         when (val result = networkClient.searchTracks(expression)) {
@@ -21,21 +28,24 @@ class TracksRepositoryImpl(
             is NetworkResult.NetworkError -> SearchResult.NetworkError
         }
 
-    override fun getTrackByNameAndArtist(track: Track): Flow<Track?> = database.getTrackByNameAndArtist(track)
+    override fun getTrackByNameAndArtist(track: Track): Flow<Track?> =
+        tracksDao.getTrackByNameAndArtist(track.trackName, track.artistName)
+            .map { it?.toTrack() }
 
-    override fun getFavoriteTracks(): Flow<List<Track>> = database.getFavoriteTracks()
+    override fun getFavoriteTracks(): Flow<List<Track>> =
+        tracksDao.getFavoriteTracks().map { tracks -> tracks.map { it.toTrack() } }
 
     override suspend fun insertTrackToPlaylist(track: Track, playlistId: Long) {
-        database.insertTrack(track)
-        database.addTrackToPlaylist(track.id, playlistId)
+        tracksDao.insertTrackIfAbsent(track.toEntity())
+        tracksDao.insertPlaylistTrack(PlaylistTrackEntity(playlistId, track.id))
     }
 
     override suspend fun deleteTrackFromPlaylist(track: Track, playlistId: Long) {
-        database.removeTrackFromPlaylist(track.id, playlistId)
+        tracksDao.deletePlaylistTrack(playlistId, track.id)
     }
 
     override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
-        database.insertTrack(track.copy(favorite = isFavorite))
+        tracksDao.insertTrack(track.copy(favorite = isFavorite).toEntity())
     }
 }
 
